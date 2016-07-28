@@ -3,12 +3,12 @@ class AppnexusApi::ReportService < AppnexusApi::Service
     raise(AppnexusApi::NotImplemented, "Service is read-only.") if @read_only
     attributes = { name => attributes }
     response = @connection.post(uri_suffix, attributes).body
-    response = JSON.parse(response)['response'] if response.is_a?(String)
+    response = JSON.parse(response) if response.is_a?(String)
     if response['error_id']
       response.delete('dbg')
       raise AppnexusApi::BadRequest.new(response.inspect)
     end
-    response
+    response['response']
   end
 
   def get(params={})
@@ -18,6 +18,7 @@ class AppnexusApi::ReportService < AppnexusApi::Service
       "start_element" => 0
     }.merge(params)
     response = @connection.get(uri_suffix, params).body
-    response = JSON.parse(response)['response'] if response.is_a?(String)
+    response = JSON.parse(response) if response.is_a?(String)
+    response['response']
   end
 end
